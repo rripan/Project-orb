@@ -15,49 +15,12 @@ const images = [
   "/src/assets/US.JPEG"
 ]
 
-function FloatingImageSphere() {
-  const groupRef = useRef()
-
-  const textures = useMemo(() => images.map(img => new TextureLoader().load(img)), [])
-
-  const TARGET_COUNT = 80 // fewer images for spacing
-  const allTextures = useMemo(() => {
-    const repeated = []
-    for (let i = 0; i < TARGET_COUNT; i++) {
-      repeated.push(textures[i % textures.length])
-    }
-    return repeated
-  }, [textures])
-
-  // Fibonacci Sphere positions
-  const spheres = useMemo(() => {
-    const temp = []
-    const radius = 8 // bigger sphere
-    const N = allTextures.length
-    const goldenRatio = (1 + Math.sqrt(5)) / 2
-
-    allTextures.forEach((tex, i) => {
-      const theta = 2 * Math.PI * i / goldenRatio
-      const phi = Math.acos(1 - 2 * (i + 0.5) / N)
-
-      const x = radius * Math.sin(phi) * Math.cos(theta)
-      const y = radius * Math.sin(phi) * Math.sin(theta)
-      const z = radius * Math.cos(phi)
-
-      temp.push({ texture: tex, position: [x, y, z] })
-    })
-    return temp
-  }, [allTextures])
-
-  useFrame(() => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += 0.001
-      groupRef.current.rotation.x += 0.0005
-    }
-  })
-
-  return (
-    <group ref={groupRef}>
+git  return (
+    <group
+      ref={groupRef}
+      onPointerOver={() => setHoveredIndex(true)}
+      onPointerOut={() => setHoveredIndex(null)}
+    >
       {spheres.map((s, idx) => (
         <mesh
           key={idx}
@@ -98,7 +61,7 @@ export default function Scene() {
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} intensity={1} />
       <FloatingImageSphere />
-      <OrbitControls enableZoom={true} />
+      <OrbitControls enableZoom={false} />
     </Canvas>
   )
 }
